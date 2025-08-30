@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Padel Court Booking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-gray-800 text-2xl mr-3"></i>
+                    <h1 class="text-xl font-bold text-gray-900">Admin Panel</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600" id="currentDate"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="adminPanel" class="space-y-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div class="flex flex-wrap gap-2">
+                    <button id="manageBookingsBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-calendar-alt mr-2"></i>Manage Bookings
+                    </button>
+                    <button id="reportsBtn" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                        <i class="fas fa-chart-bar mr-2"></i>Reports
+                    </button>
+                    <button id="mtdWidgetBtn" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+                        <i class="fas fa-rupee-sign mr-2"></i>MTD Revenue
+                    </button>
+                    <button id="equipmentBtn" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors">
+                        <i class="fas fa-shopping-cart mr-2"></i>Equipment
+                    </button>
+                    <button id="packagesBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-gift mr-2"></i>Packages
+                    </button>
+                </div>
+            </div>
+
+            <div id="adminContent">
+                </div>
+        </div>
+    </div>
+    
+    <div id="notification" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 p-4 max-w-sm">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i id="notificationIcon" class="text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <p id="notificationMessage" class="text-sm font-medium text-gray-900"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script> 
+    <script src="js/admin.js"></script>
+    <script src="js/reports.js"></script>
+    <script>
+        // Minimal setup for admin page Date
+        document.addEventListener('DOMContentLoaded', () => {
+             const now = new Date();
+             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+             const dateEl = document.getElementById('currentDate');
+             if (dateEl) {
+                dateEl.textContent = now.toLocaleDateString('en-US', options);
+             }
+             // Initialize admin panel on this page
+             if (window.adminPanel) {
+                window.adminPanel.showManageBookings();
+             }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padel Court Booking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .slot-available {
+            background-color: #dcfce7; color: #166534; border-color: #86efac;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .slot-available:hover { background-color: #bbf7d0; }
+        .slot-booked {
+            background-color: #fee2e2; color: #991b1b; border-color: #fca5a5;
+            cursor: not-allowed; opacity: 0.75;
+        }
+        .court-card {
+            background-color: white; border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb; transition: box-shadow 0.2s;
+        }
+        .court-card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .tab-active { background-color: #2563eb; color: white; }
+        .tab-inactive { background-color: #e5e7eb; color: #374151; }
+        .tab-inactive:hover { background-color: #d1d5db; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-tennis-ball text-blue-600 text-2xl mr-3"></i>
+                    <h1 class="text-xl font-bold text-gray-900">Padel Court Booking</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="posBtn" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
+                        <i class="fas fa-cash-register mr-2"></i>POS Sales
+                    </button>
+                    <div class="text-sm text-gray-600" id="currentDate"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Main View Tabs -->
+        <div class="mb-6">
+            <div class="flex border-b border-gray-200">
+                <button id="slotsViewTab" class="px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
+                    <i class="fas fa-th-large mr-2"></i>Court Slots View
+                </button>
+                <button id="bookingsViewTab" class="px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:border-gray-300">
+                    <i class="fas fa-list-alt mr-2"></i>Bookings View
+                </button>
+            </div>
+        </div>
+
+        <!-- Date Selector -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <label for="bookingDate" class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+                <input type="date" id="bookingDate" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+
+        <!-- Views Container -->
+        <div id="viewsContainer">
+            <!-- Court Slots View -->
+            <div id="slotsView">
+                <div class="flex justify-center mb-6">
+                    <div class="bg-gray-200 p-1 rounded-lg">
+                        <button id="indoorTab" class="px-6 py-2 rounded-md font-medium transition-colors tab-active">
+                            <i class="fas fa-home mr-2"></i>Indoor Courts
+                        </button>
+                        <button id="outdoorTab" class="px-6 py-2 rounded-md font-medium transition-colors tab-inactive">
+                            <i class="fas fa-sun mr-2"></i>Outdoor Courts
+                        </button>
+                    </div>
+                </div>
+                <div id="courtsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Court slots will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <!-- Bookings Table View -->
+            <div id="bookingsView" class="hidden">
+                 <div class="flex justify-center mb-6">
+                    <div class="bg-gray-200 p-1 rounded-lg">
+                        <button id="indoorBookingsTab" class="px-6 py-2 rounded-md font-medium transition-colors tab-active">
+                            <i class="fas fa-home mr-2"></i>Indoor Bookings
+                        </button>
+                        <button id="outdoorBookingsTab" class="px-6 py-2 rounded-md font-medium transition-colors tab-inactive">
+                            <i class="fas fa-sun mr-2"></i>Outdoor Bookings
+                        </button>
+                    </div>
+                </div>
+                <div id="bookingsTableContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Booking tables will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal (Remains the same) -->
+    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Book Court</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div id="bookingForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Court Details</label>
+                            <p id="courtDetails" class="text-sm text-gray-600"></p>
+                        </div>
+                        <div id="durationSelector" class="hidden">
+                            <label for="duration" class="block text-sm font-medium text-gray-700 mb-1">Duration (hours)</label>
+                            <select id="duration" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                <option value="1">1 hour</option><option value="1.5">1.5 hours</option><option value="2">2 hours</option>
+                                <option value="2.5">2.5 hours</option><option value="3">3 hours</option><option value="3.5">3.5 hours</option>
+                                <option value="4">4 hours</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+                            <input type="text" id="customerName" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                        <div>
+                            <label for="customerContact" class="block text-sm font-medium text-gray-700 mb-1">Contact (Phone/Email)</label>
+                            <input type="text" id="customerContact" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                        </div>
+                        <div class="mt-4 border-t pt-4">
+                            <h4 class="font-semibold mb-2 text-gray-700">Add Equipment or Packages</h4>
+                            <div class="space-y-2">
+                                <select id="equipmentSelect" class="w-full border border-gray-300 rounded-md px-3 py-2"><option value="">Select Equipment</option></select>
+                                <select id="packageSelect" class="w-full border border-gray-300 rounded-md px-3 py-2"><option value="">Select Package</option></select>
+                                <button type="button" onclick="addToCart()" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm w-full"><i class="fas fa-plus mr-1"></i>Add to Cart</button>
+                            </div>
+                            <div id="cartItems" class="mt-4 space-y-2"></div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-md">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium text-gray-700">Total Amount:</span>
+                                <span id="totalAmount" class="font-semibold text-lg text-green-600">PKR 0</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 pt-4">
+                            <button id="confirmBooking" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Confirm Booking</button>
+                            <button id="cancelBooking" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POS Sales Modal (Remains the same) -->
+    <div id="posModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900"><i class="fas fa-cash-register mr-2 text-green-600"></i>Point of Sale</h3>
+                        <button id="closePosModal" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="md:col-span-2">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-3">Available Products</h4>
+                                <div class="mb-4">
+                                    <h5 class="font-medium text-gray-700 mb-2"><i class="fas fa-shopping-cart mr-1 text-orange-600"></i>Equipment</h5>
+                                    <select id="posEquipmentSelect" class="w-full border border-gray-300 rounded-md px-3 py-2 mb-2"></select>
+                                </div>
+                                <div class="mb-4">
+                                    <h5 class="font-medium text-gray-700 mb-2"><i class="fas fa-gift mr-1 text-purple-600"></i>Packages</h5>
+                                    <select id="posPackageSelect" class="w-full border border-gray-300 rounded-md px-3 py-2 mb-2"></select>
+                                </div>
+                                <button onclick="addToPosCart()" class="bg-blue-600 text-white px-4 py-2 rounded-md w-full"><i class="fas fa-plus mr-1"></i>Add to Sale</button>
+                            </div>
+                            <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-3">Customer Information</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name</label>
+                                        <input type="text" id="posCustomerName" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Info</label>
+                                        <input type="text" id="posCustomerContact" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="bg-gray-50 p-4 rounded-lg h-full flex flex-col">
+                                <h4 class="font-semibold mb-3">Current Sale</h4>
+                                <div id="posCartItems" class="mb-4 flex-grow max-h-60 overflow-y-auto"><p class="text-gray-500 text-center py-4">No items added</p></div>
+                                <div class="border-t pt-3">
+                                    <div class="flex justify-between mb-2"><span class="font-medium">Subtotal:</span><span id="posSubtotal">PKR 0</span></div>
+                                    <div class="flex justify-between mb-2 text-sm text-gray-600"><span>Tax (0%):</span><span id="posTax">PKR 0</span></div>
+                                    <div class="flex justify-between font-bold text-lg border-t pt-2"><span>Total:</span><span id="posTotal">PKR 0</span></div>
+                                </div>
+                                <div class="mt-4 space-y-2">
+                                    <button onclick="completePosSale()" class="bg-green-600 text-white px-4 py-2 rounded-md w-full"><i class="fas fa-check mr-1"></i>Complete Sale</button>
+                                    <button onclick="clearPosCart()" class="bg-red-500 text-white px-4 py-2 rounded-md w-full"><i class="fas fa-times mr-1"></i>Clear</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Toast (Remains the same) -->
+    <div id="notification" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg border-l-4 p-4 max-w-sm">
+            <div class="flex">
+                <div class="flex-shrink-0"><i id="notificationIcon" class="text-xl"></i></div>
+                <div class="ml-3"><p id="notificationMessage" class="text-sm font-medium text-gray-900"></p></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "name": "padel-court-booking-system",
+  "version": "1.0.0",
+  "description": "A comprehensive web application for managing padel court bookings with advanced reporting and administrative features",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "node server.js",
+    "install-deps": "npm install sqlite3",
+    "setup": "npm install sqlite3 && node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "padel",
+    "court-booking",
+    "sports-management",
+    "booking-system",
+    "reports",
+    "admin-dashboard",
+    "sqlite",
+    "database"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/padel-booking-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/padel-booking-system/issues"
+  },
+  "homepage": "https://github.com/your-username/padel-booking-system#readme",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "files": [
+    "server.js",
+    "package.json",
+    "index.html",
+    "db.js",
+    "js/",
+    "data/",
+    "README.md"
+  ]
+}
