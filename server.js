@@ -4,7 +4,7 @@ const path = require('path');
 const db = require('./db');
 const { handleEnhancedEndpoints } = require('./enhanced-server-endpoints');
 
-const PORT = process.env.PORT || 8000;
+const PORT = 8000;
 
 const server = http.createServer((req, res) => {
   // Set CORS headers
